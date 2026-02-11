@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Quiz - Valentine's Day 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #ff6b9d;
+            --deep-rose: #c44569;
+            --cream: #fff5f7;
+            --burgundy: #8b2f4d;
+            --gold: #f4d03f;
+            --shadow: rgba(139, 47, 77, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #ffe8ee 50%, #ffd4e5 100%);
+            min-height: 100vh;
+            color: var(--burgundy);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(196, 69, 105, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--rose);
+            opacity: 0.15;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-screen,
+        .quiz-screen,
+        .results-screen {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 50px;
+            box-shadow: 
+                0 20px 60px var(--shadow),
+                0 0 0 1px rgba(255, 107, 157, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-screen::before,
+        .quiz-screen::before,
+        .results-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--rose), var(--deep-rose), var(--gold));
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            animation: titleSlide 1s ease-out 0.3s both;
+        }
+
+        @keyframes titleSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.4em;
+            color: var(--burgundy);
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .start-btn,
+        .next-btn,
+        .restart-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 40px auto 0;
+            padding: 18px 40px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::before,
+        .next-btn::before,
+        .restart-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .start-btn:hover::before,
+        .next-btn:hover::before,
+        .restart-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .start-btn:hover,
+        .next-btn:hover,
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.4);
+        }
+
+        .start-btn:active,
+        .next-btn:active,
+        .restart-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .question-container {
+            animation: questionSlide 0.6s ease-out;
+        }
+
+        @keyframes questionSlide {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9em;
+            color: var(--rose);
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .question {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--burgundy);
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 1.1em;
+            color: var(--burgundy);
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 15px 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            border: 2px solid rgba(255, 107, 157, 0.2);
+            border-radius: 15px;
+            background: var(--cream);
+            color: var(--burgundy);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--rose);
+            background: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 107, 157, 0.1);
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rose), var(--deep-rose));
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 40px auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(255, 107, 157, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .score-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 4em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-label {
+            font-size: 1.8em;
+            color: var(--burgundy);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .verdict {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--deep-rose);
+            margin: 30px 0;
+            line-height: 1.4;
+        }
+
+        .verdict-description {
+            font-size: 1.3em;
+            color: var(--burgundy);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .answer-review {
+            margin-top: 50px;
+            text-align: left;
+        }
+
+        .answer-review h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            color: var(--burgundy);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--rose);
+            padding-bottom: 10px;
+        }
+
+        .answer-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--cream);
+            border-radius: 15px;
+            border-left: 4px solid var(--rose);
+        }
+
+        .answer-question {
+            font-weight: 700;
+            color: var(--burgundy);
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .answer-text {
+            color: var(--deep-rose);
+            font-size: 1.15em;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .welcome-screen,
+            .quiz-screen,
+            .results-screen {
+                padding: 40px 30px;
+            }
+
+            .question {
+                font-size: 1.5em;
+            }
+
+            .score-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .score-text {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-background" id="heartsBackground"></div>
+    
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>Love Quiz</h1>
+            <p class="subtitle">How well do you really know your partner?</p>
+            <p style="font-size: 1.2em; text-align: center; line-height: 1.8; margin-bottom: 20px;">
+                Test your knowledge and prove that love truly knows no bounds. Answer 10 questions about your relationship and see just how deep your connection goes.
+            </p>
+            <button class="start-btn" onclick="startQuiz()">Begin the Journey</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen hidden" id="quizScreen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div id="questionContainer"></div>
+            <button class="next-btn" onclick="nextQuestion()">Continue</button>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen hidden" id="resultsScreen">
+            <h1>Your Love Score</h1>
+            <div class="score-circle">
+                <div class="score-text" id="scoreDisplay">0</div>
+            </div>
+            <p class="score-label">Questions Answered</p>
+            <div class="verdict" id="verdictText"></div>
+            <p class="verdict-description" id="verdictDescription"></p>
+            
+            <div class="answer-review">
+                <h3>Your Answers</h3>
+                <div id="answersReview"></div>
+            </div>
+            
+            <button class="restart-btn" onclick="restartQuiz()">Take the Quiz Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                question: "How long have you been together?",
+                type: "text",
+                placeholder: "e.g., 2 years, 6 months..."
+            },
+            {
+                id: 2,
+                question: "What's your partner's favorite color?",
+                type: "text",
+                placeholder: "Enter their favorite color..."
+            },
+            {
+                id: 3,
+                question: "What's your partner's favorite drink?",
+                type: "text",
+                placeholder: "Coffee, tea, wine, soda...?"
+            },
+            {
+                id: 4,
+                question: "What's their go-to comfort food?",
+                type: "text",
+                placeholder: "What do they crave when they need comfort?"
+            },
+            {
+                id: 5,
+                question: "What type of clothing do they wear most often?",
+                type: "text",
+                placeholder: "Casual, formal, athletic, bohemian...?"
+            },
+            {
+                id: 6,
+                question: "What's one thing you admire most about your partner?",
+                type: "textarea",
+                placeholder: "Take your time with this one..."
+            },
+            {
+                id: 7,
+                question: "What's their biggest pet peeve?",
+                type: "text",
+                placeholder: "What really gets under their skin?"
+            },
+            {
+                id: 8,
+                question: "What was the exact moment you knew you were in love with them?",
+                type: "textarea",
+                placeholder: "Describe that special moment in detail..."
+            },
+            {
+                id: 9,
+                question: "What's their biggest dream or goal they've shared with you?",
+                type: "textarea",
+                placeholder: "What do they aspire to achieve?"
+            },
+            {
+                id: 10,
+                question: "If your partner could relive one day with you, which day do you think they'd choose and why?",
+                type: "textarea",
+                placeholder: "Think carefully... what day would mean the most to them?"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        // Create floating hearts
+        function createHearts() {
+            const heartsContainer = document.getElementById('heartsBackground');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '♥';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            const container = document.getElementById('questionContainer');
+            
+            let inputHTML;
+            if (question.type === 'textarea') {
+                inputHTML = `<textarea id="answer" placeholder="${question.placeholder}"></textarea>`;
+            } else {
+                inputHTML = `<input type="${question.type}" id="answer" placeholder="${question.placeholder}">`;
+            }
+
+            container.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question">${question.question}</div>
+                    <div class="input-group">
+                        ${inputHTML}
+                    </div>
+                </div>
+            `;
+
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('answer').focus();
+            }, 300);
+        }
+
+        function nextQuestion() {
+            const answer = document.getElementById('answer').value.trim();
+            
+            if (!answer) {
+                alert('Please answer the question before continuing!');
+                return;
+            }
+
+            answers.push({
+                question: questions[currentQuestion].question,
+                answer: answer
+            });
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            // Animate score
+            let score = 0;
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const interval = setInterval(() => {
+                score++;
+                scoreDisplay.textContent = score;
+                if (score >= 10) {
+                    clearInterval(interval);
+                }
+            }, 100);
+
+            // Set verdict based on completion
+            const verdicts = [
+                {
+                    title: "Soulmates United",
+                    description: "You've proven that true love is built on deep understanding and genuine connection. Every answer revealed how well you know your partner's heart, dreams, and quirks. This Valentine's Day, celebrate the beautiful bond you share!"
+                }
+            ];
+
+            const verdict = verdicts[0];
+            document.getElementById('verdictText').textContent = verdict.title;
+            document.getElementById('verdictDescription').textContent = verdict.description;
+
+            // Show answers
+            const reviewContainer = document.getElementById('answersReview');
+            reviewContainer.innerHTML = answers.map((item, index) => `
+                <div class="answer-item">
+                    <div class="answer-question">Q${index + 1}: ${item.question}</div>
+                    <div class="answer-text">${item.answer}</div>
+                </div>
+            `).join('');
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+
+        // Initialize
+        createHearts();
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && document.getElementById('answer')) {
+                const answer = document.getElementById('answer');
+                if (answer.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    nextQuestion();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
