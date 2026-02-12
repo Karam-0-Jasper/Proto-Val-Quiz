@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate The Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --electric: #00ff88;
+            --deep-green: #00b359;
+            --dark-bg: #0a0f0d;
+            --card-bg: #111816;
+            --text-primary: #ffffff;
+            --text-secondary: #88a89d;
+            --shadow: rgba(0, 255, 136, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dark-bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 179, 89, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .voting-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(0, 255, 136, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            animation: slideIn 0.6s ease-out;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--electric);
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--electric);
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+            }
+        }
+
+        h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--electric), var(--deep-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .question-link {
+            display: block;
+            text-align: center;
+            margin: 20px 0 30px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 12px;
+            border: 1px dashed rgba(0, 255, 136, 0.3);
+        }
+
+        .question-link a {
+            color: var(--electric);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .question-link a:hover {
+            color: #ffffff;
+        }
+
+        .voting-section {
+            margin: 30px 0;
+        }
+
+        .section-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rating-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rating-btn {
+            aspect-ratio: 1;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 12px;
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rating-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .rating-btn:hover {
+            border-color: var(--electric);
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .rating-btn:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .rating-btn.selected {
+            background: linear-gradient(135deg, var(--electric), var(--deep-green));
+            border-color: var(--electric);
+            color: var(--dark-bg);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+            transform: scale(1.1);
+        }
+
+        .rating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--electric), var(--deep-green));
+            border: none;
+            border-radius: 12px;
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--dark-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.5);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .total-votes {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .total-votes span {
+            color: var(--electric);
+            font-weight: 700;
+            font-size: 1.5em;
+            font-family: 'Unbounded', sans-serif;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            animation: fadeInResult 0.5s ease-out backwards;
+        }
+
+        .result-item:nth-child(1) { animation-delay: 0.1s; }
+        .result-item:nth-child(2) { animation-delay: 0.15s; }
+        .result-item:nth-child(3) { animation-delay: 0.2s; }
+        .result-item:nth-child(4) { animation-delay: 0.25s; }
+        .result-item:nth-child(5) { animation-delay: 0.3s; }
+        .result-item:nth-child(6) { animation-delay: 0.35s; }
+        .result-item:nth-child(7) { animation-delay: 0.4s; }
+        .result-item:nth-child(8) { animation-delay: 0.45s; }
+        .result-item:nth-child(9) { animation-delay: 0.5s; }
+        .result-item:nth-child(10) { animation-delay: 0.55s; }
+
+        @keyframes fadeInResult {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .result-label {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .result-count {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .result-bar-container {
+            height: 40px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .result-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric), var(--deep-green));
+            border-radius: 8px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .result-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .result-percentage {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            color: var(--dark-bg);
+            font-size: 0.9em;
+            z-index: 1;
+        }
+
+        .thank-you {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 16px;
+            margin-top: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .thank-you h2 {
+            font-family: 'Unbounded', sans-serif;
+            color: var(--electric);
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .thank-you p {
+            color: var(--text-secondary);
+            font-size: 1em;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .rating-buttons {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+
+            .rating-btn {
+                font-size: 1.1em;
+            }
+
+            .voting-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    
+    <div class="container">
+        <div class="voting-card">
+            <div class="header">
+                <div class="badge">Live Poll</div>
+                <h1>Rate The Prototype</h1>
+                <p class="subtitle">Share your honest feedback!</p>
+            </div>
+
+            <div class="question-link">
+                <a href="https://karambazelany.github.io/Proto-Val-Quiz/" target="_blank">
+                    🔗 View the Valentine's Quiz
+                </a>
+            </div>
+
+            <div class="voting-section" id="votingSection">
+                <div class="section-title">Select Your Rating (1-10)</div>
+                <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                    <button class="rating-btn" data-rating="6">6</button>
+                    <button class="rating-btn" data-rating="7">7</button>
+                    <button class="rating-btn" data-rating="8">8</button>
+                    <button class="rating-btn" data-rating="9">9</button>
+                    <button class="rating-btn" data-rating="10">10</button>
+                </div>
+                <button class="submit-btn" id="submitBtn" disabled>Submit Vote</button>
+            </div>
+
+            <div class="results-section">
+                <div class="section-title">Live Results</div>
+                <div class="total-votes">
+                    Total Votes: <span id="totalVotes">0</span>
+                </div>
+                <div id="resultsContainer"></div>
+            </div>
+
+            <div class="thank-you hidden" id="thankYou">
+                <h2>Thanks for voting! 🎉</h2>
+                <p>Your feedback helps make the quiz better</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRating = null;
+        let hasVoted = false;
+
+        // Rating buttons
+        const ratingButtons = document.querySelectorAll('.rating-btn');
+        const submitBtn = document.getElementById('submitBtn');
+
+        ratingButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (hasVoted) return;
+                
+                selectedRating = parseInt(btn.dataset.rating);
+                
+                // Remove selected class from all buttons
+                ratingButtons.forEach(b => b.classList.remove('selected'));
+                
+                // Add selected class to clicked button
+                btn.classList.add('selected');
+                
+                // Enable submit button
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Submit vote
+        submitBtn.addEventListener('click', async () => {
+            if (!selectedRating || hasVoted) return;
+            
+            try {
+                // Get current votes from storage
+                const currentVotes = await window.storage.get('poll-votes', true) || { value: '{}' };
+                const votes = JSON.parse(currentVotes.value);
+                
+                // Increment the selected rating
+                votes[selectedRating] = (votes[selectedRating] || 0) + 1;
+                
+                // Save back to storage
+                await window.storage.set('poll-votes', JSON.stringify(votes), true);
+                
+                // Mark as voted
+                hasVoted = true;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Vote Submitted!';
+                
+                // Show thank you message
+                document.getElementById('thankYou').classList.remove('hidden');
+                
+                // Disable all rating buttons
+                ratingButtons.forEach(btn => btn.style.opacity = '0.5');
+                
+                // Update results
+                displayResults();
+            } catch (error) {
+                console.error('Error submitting vote:', error);
+                alert('Error submitting vote. Please try again.');
+            }
+        });
+
+        // Display results
+        async function displayResults() {
+            try {
+                const currentVotes = await window.storage.get('poll-votes', true);
+                const votes = currentVotes ? JSON.parse(currentVotes.value) : {};
+                
+                // Calculate total votes
+                const totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+                document.getElementById('totalVotes').textContent = totalVotes;
+                
+                // Generate results HTML
+                const resultsContainer = document.getElementById('resultsContainer');
+                resultsContainer.innerHTML = '';
+                
+                for (let i = 10; i >= 1; i--) {
+                    const count = votes[i] || 0;
+                    const percentage = totalVotes > 0 ? ((count / totalVotes) * 100).toFixed(1) : 0;
+                    
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    resultItem.innerHTML = `
+                        <div class="result-header">
+                            <span class="result-label">${i}/10</span>
+                            <span class="result-count">${count} vote${count !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="result-bar-container">
+                            <div class="result-bar" style="width: ${percentage}%">
+                                ${percentage > 5 ? `<span class="result-percentage">${percentage}%</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(resultItem);
+                }
+            } catch (error) {
+                console.error('Error loading results:', error);
+            }
+        }
+
+        // Load results on page load
+        displayResults();
+        
+        // Refresh results every 5 seconds
+        setInterval(displayResults, 5000);
+    </script>
+</body>
+</html>
